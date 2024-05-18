@@ -36,16 +36,28 @@ app.post("/data", async (req, res) => {
     description,
     date,
     numberOfTickets,
+    numberOfAvailableTickets,
+    ticketPrices,
     venue,
     organizer,
     nonceId,
   } = req.body;
   try {
     await pool.query(
-      "INSERT INTO events (title, description, date, numberOfTickets, venue, organizer, nonceId) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-      [title, description, date, numberOfTickets, venue, organizer, nonceId]
+      "INSERT INTO events (title, description, date, numberOfTickets, numberOfAvailableTickets, ticketPrices, venue, organizer, nonceId) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+      [
+        title,
+        description,
+        date,
+        numberOfTickets,
+        numberOfAvailableTickets,
+        ticketPrices,
+        venue,
+        organizer,
+        nonceId,
+      ]
     );
-    res.json({ message: "Event created successfully" });
+    res.status(200).send("Event created successfully");
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error creating event" });
@@ -63,18 +75,32 @@ app.get("/data", async (req, res) => {
   }
 });
 
+// Read specific data
+app.get("/data/:id", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM events WHERE id = $1", [
+      req.params.id,
+    ]);
+    res.json({ events: result.rows });
+    console.log(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error retrieving events" });
+  }
+});
+
 // Update
 app.put("/data/:id", async (req, res) => {
   const { id } = req.params;
   const { data } = req.body;
-  await pool.query("UPDATE data SET data = $1 WHERE id = $2", [data, id]);
+  await pool.query("UPDATE events SET data = $1 WHERE id = $2", [data, id]);
   res.json({ success: true });
 });
 
 // Delete
 app.delete("/data/:id", async (req, res) => {
   const { id } = req.params;
-  await pool.query("DELETE FROM data WHERE id = $1", [id]);
+  await pool.query("DELETE FROM events WHERE id = $1", [id]);
   res.json({ success: true });
 });
 

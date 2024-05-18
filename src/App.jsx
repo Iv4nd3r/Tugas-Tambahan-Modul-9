@@ -3,6 +3,7 @@ import CreateEvent from "./create-event";
 import ScanTicket from "./scan-ticket";
 import Navbar from "./navbar";
 import EventTable from "./EventTable";
+import EditEvent from "./edit-event";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<EventTable />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/scan-ticket" element={<ScanTicket />} />
+        <Route path="/edit-event/:id" component={EditEvent} />
       </Routes>
     </Router>
   );

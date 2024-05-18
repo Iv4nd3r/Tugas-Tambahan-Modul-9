@@ -46,7 +46,8 @@ const EventTable = () => {
             <th className="px-4 py-2">Title</th>
             <th className="px-4 py-2">Description</th>
             <th className="px-4 py-2">Date</th>
-            <th className="px-4 py-2">Number of Tickets</th>
+            <th className="px-4 py-2">Total Number of Tickets</th>
+            <th className="px-4 py-2">Number of Tickets Available</th>
             <th className="px-4 py-2">Venue</th>
             <th className="px-4 py-2">Organizer</th>
           </tr>
@@ -60,14 +61,51 @@ const EventTable = () => {
                 {new Date(event.date).toLocaleString()}
               </td>
               <td className="border px-4 py-2">{event.numberoftickets}</td>
+              <td className="border px-4 py-2">
+                {event.numberofavailabletickets}
+              </td>
               <td className="border px-4 py-2">{event.venue}</td>
               <td className="border px-4 py-2">{event.organizer}</td>
+              <td>
+                <Link to={`/reserve/${event.id}`}>{`Reserve Event`}</Link>
+              </td>
+              <td>
+                <Link to="#" onClick={() => handleEdit(event.id)}>
+                  Edit Event
+                </Link>
+              </td>
+              <td>
+                <Link to="#" onClick={() => handleDelete(event.id)}>
+                  Delete Event
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
   );
+};
+
+const handleDelete = async (id) => {
+  if (window.confirm("Are you sure you want to delete this event?")) {
+    try {
+      const response = await axios.delete(`http://localhost:3000/data/${id}`);
+      if (response.status === 200) {
+        alert("Event deleted successfully");
+        window.location.reload(); // Refresh the page
+      } else {
+        alert("Failed to delete event");
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      alert("Failed to delete event");
+    }
+  }
+};
+
+const handleEdit = (id) => {
+  window.location.href = `/edit-event/${id}`;
 };
 
 export default EventTable;

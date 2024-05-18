@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // Import the v4 function from the uuid package
+import axios from "axios";
 
 const CreateEvent = () => {
   const [title, setTitle] = useState("");
@@ -9,35 +10,39 @@ const CreateEvent = () => {
   const [venue, setVenue] = useState("");
   const [organizer, setOrganizer] = useState("");
   const [time, setTime] = useState("");
+  const [ticketPrices, setTicketPrices] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const dateTime = new Date(`${date}T${time}`); // Combine the date and time into a single date object
     const eventData = {
       title,
       description,
-      date,
+      date: dateTime.toISOString(),
+      time,
       numberOfTickets,
+      numberOfAvailableTickets: numberOfTickets, // Initialize the number of available tickets to the total number of tickets
+      ticketPrices,
       venue,
       organizer,
     };
 
     const nonceId = generateNonceId(); // Generate a random NONCE ID
-    const response = await fetch("http://localhost:3000/data", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...eventData, nonceId }), // Include the NONCE ID in the request body
-    });
-
-    if (response.ok) {
-      console.log("Event created successfully");
-      alert("Event created successfully");
-      window.location.href = "/"; // Redirect to the startup page
-    } else {
-      console.error("Error creating event");
-    }
+    await axios
+      .post("http://localhost:3000/data", {
+        ...eventData,
+        nonceId,
+      })
+      .then((response) => {
+        console.log(response.data);
+        alert(response.data);
+        window.location.href = "/"; // Redirect to the startup page
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Failed to create event");
+      });
   };
 
   const generateNonceId = () => {
@@ -53,6 +58,7 @@ const CreateEvent = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <label className="flex flex-col">
@@ -62,6 +68,7 @@ const CreateEvent = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <label className="flex flex-col">
@@ -71,6 +78,7 @@ const CreateEvent = () => {
           value={date}
           onChange={(e) => setDate(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <label className="flex flex-col">
@@ -80,6 +88,7 @@ const CreateEvent = () => {
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <label className="flex flex-col">
@@ -89,6 +98,17 @@ const CreateEvent = () => {
           value={numberOfTickets}
           onChange={(e) => setNumberOfTickets(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
+        />
+      </label>
+      <label className="flex flex-col">
+        Ticket prices
+        <input
+          type="number"
+          value={ticketPrices}
+          onChange={(e) => setTicketPrices(e.target.value)}
+          className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <label className="flex flex-col">
@@ -98,6 +118,7 @@ const CreateEvent = () => {
           value={venue}
           onChange={(e) => setVenue(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <label className="flex flex-col">
@@ -107,6 +128,7 @@ const CreateEvent = () => {
           value={organizer}
           onChange={(e) => setOrganizer(e.target.value)}
           className="mt-1 p-2 border rounded"
+          required
         />
       </label>
       <button type="submit" className="mt-4 p-2 bg-blue-500 text-white rounded">
