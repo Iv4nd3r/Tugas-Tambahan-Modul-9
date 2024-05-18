@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<EventTable />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/scan-ticket" element={<ScanTicket />} />
-        <Route path="/edit-event/:id" component={EditEvent} />
+        <Route path="/edit-event/:id" element={<EditEvent />} />
       </Routes>
     </Router>
   );

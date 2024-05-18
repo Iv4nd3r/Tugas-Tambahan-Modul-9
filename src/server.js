@@ -82,7 +82,6 @@ app.get("/data/:id", async (req, res) => {
       req.params.id,
     ]);
     res.json({ events: result.rows });
-    console.log(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error retrieving events" });
@@ -90,18 +89,44 @@ app.get("/data/:id", async (req, res) => {
 });
 
 // Update
+// Update
 app.put("/data/:id", async (req, res) => {
   const { id } = req.params;
-  const { data } = req.body;
-  await pool.query("UPDATE events SET data = $1 WHERE id = $2", [data, id]);
-  res.json({ success: true });
+  const eventData = req.body;
+  try {
+    await pool.query(
+      "UPDATE events SET title = $1, description = $2, date = $3, numberOfTickets = $4, numberOfAvailableTickets = $5, ticketPrices = $6, venue = $7, organizer = $8, nonceId = $9 WHERE id = $10",
+      [
+        eventData.title,
+        eventData.description,
+        eventData.date,
+        eventData.numberOfTickets,
+        eventData.numberOfAvailableTickets,
+        eventData.ticketPrices,
+        eventData.venue,
+        eventData.organizer,
+        eventData.nonceId,
+        id,
+      ]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating event" });
+  }
 });
 
 // Delete
 app.delete("/data/:id", async (req, res) => {
   const { id } = req.params;
-  await pool.query("DELETE FROM events WHERE id = $1", [id]);
-  res.json({ success: true });
+  try {
+    await pool.query("DELETE FROM events WHERE id = $1", [id]);
+    res.json({ success: true });
+    res.status(200).send("Event deleted successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error deleting event" });
+  }
 });
 
 // Generate QR code

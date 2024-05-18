@@ -15,11 +15,10 @@ const CreateEvent = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const dateTime = new Date(`${date}T${time}`); // Combine the date and time into a single date object
     const eventData = {
       title,
       description,
-      date: dateTime.toISOString(),
+      date: `${date}T${time}`,
       time,
       numberOfTickets,
       numberOfAvailableTickets: numberOfTickets, // Initialize the number of available tickets to the total number of tickets

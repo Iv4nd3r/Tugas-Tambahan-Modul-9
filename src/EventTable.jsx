@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 const EventTable = () => {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState("asc");
 
   useEffect(() => {
     axios.get("http://localhost:3000/data").then((response) => {
@@ -20,6 +22,21 @@ const EventTable = () => {
         return true;
       })
     : [];
+
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (a[sortField] < b[sortField]) {
+      return sortDirection === "asc" ? -1 : 1;
+    }
+    if (a[sortField] > b[sortField]) {
+      return sortDirection === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const handleSort = (field) => {
+    setSortField(field);
+    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -43,17 +60,43 @@ const EventTable = () => {
       <table className="table-auto">
         <thead>
           <tr>
-            <th className="px-4 py-2">Title</th>
-            <th className="px-4 py-2">Description</th>
-            <th className="px-4 py-2">Date</th>
-            <th className="px-4 py-2">Total Number of Tickets</th>
-            <th className="px-4 py-2">Number of Tickets Available</th>
-            <th className="px-4 py-2">Venue</th>
-            <th className="px-4 py-2">Organizer</th>
+            <th className="px-4 py-2" onClick={() => handleSort("title")}>
+              Title
+            </th>
+            <th className="px-4 py-2" onClick={() => handleSort("description")}>
+              Description
+            </th>
+            <th className="px-4 py-2" onClick={() => handleSort("date")}>
+              Date
+            </th>
+            <th
+              className="px-4 py-2"
+              onClick={() => handleSort("numberoftickets")}
+            >
+              Total Number of Tickets
+            </th>
+            <th
+              className="px-4 py-2"
+              onClick={() => handleSort("numberofavailabletickets")}
+            >
+              Number of Tickets Available
+            </th>
+            <th
+              className="px-4 py-2"
+              onClick={() => handleSort("ticketprices")}
+            >
+              Ticket Prices
+            </th>
+            <th className="px-4 py-2" onClick={() => handleSort("venue")}>
+              Venue
+            </th>
+            <th className="px-4 py-2" onClick={() => handleSort("organizer")}>
+              Organizer
+            </th>
           </tr>
         </thead>
         <tbody>
-          {filteredEvents.map((event) => (
+          {sortedEvents.map((event) => (
             <tr key={event.id}>
               <td className="border px-4 py-2">{event.title}</td>
               <td className="border px-4 py-2">{event.description}</td>
@@ -64,15 +107,14 @@ const EventTable = () => {
               <td className="border px-4 py-2">
                 {event.numberofavailabletickets}
               </td>
+              <td className="border px-4 py-2">{event.ticketprices}</td>
               <td className="border px-4 py-2">{event.venue}</td>
               <td className="border px-4 py-2">{event.organizer}</td>
               <td>
                 <Link to={`/reserve/${event.id}`}>{`Reserve Event`}</Link>
               </td>
               <td>
-                <Link to="#" onClick={() => handleEdit(event.id)}>
-                  Edit Event
-                </Link>
+                <Link to={`/edit-event/${event.id}`}>Edit Event</Link>
               </td>
               <td>
                 <Link to="#" onClick={() => handleDelete(event.id)}>
@@ -102,10 +144,6 @@ const handleDelete = async (id) => {
       alert("Failed to delete event");
     }
   }
-};
-
-const handleEdit = (id) => {
-  window.location.href = `/edit-event/${id}`;
 };
 
 export default EventTable;

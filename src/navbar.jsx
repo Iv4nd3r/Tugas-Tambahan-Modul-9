@@ -5,13 +5,6 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  if (
-    location.pathname.startsWith("/create-event/") &&
-    location.pathname.length > "/create-event/".length
-  ) {
-    return "Edit Event";
-  }
-
   const getTitle = () => {
     switch (location.pathname) {
       case "/":
@@ -20,7 +13,12 @@ const Navbar = () => {
         return "Create Event";
       case "/scan-ticket":
         return "Scan Ticket";
+      case "edit-event/:id":
+        return "Edit Event";
       default:
+        if (location.pathname.startsWith("/edit-event/")) {
+          return "Edit Event";
+        }
         return "";
     }
   };
