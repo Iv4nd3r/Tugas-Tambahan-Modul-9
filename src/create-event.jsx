@@ -34,7 +34,6 @@ const CreateEvent = () => {
         nonceId,
       })
       .then((response) => {
-        console.log(response.data);
         alert(response.data);
         window.location.href = "/"; // Redirect to the startup page
       })

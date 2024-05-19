@@ -89,7 +89,6 @@ app.get("/data/:id", async (req, res) => {
 });
 
 // Update
-// Update
 app.put("/data/:id", async (req, res) => {
   const { id } = req.params;
   const eventData = req.body;
@@ -109,7 +108,7 @@ app.put("/data/:id", async (req, res) => {
         id,
       ]
     );
-    res.json({ success: true });
+    res.status(200).send("Event updated successfully");
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error updating event" });
@@ -121,11 +120,26 @@ app.delete("/data/:id", async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query("DELETE FROM events WHERE id = $1", [id]);
-    res.json({ success: true });
-    res.status(200).send("Event deleted successfully");
+    res.status(200).json({ message: "Event deleted successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error deleting event" });
+  }
+});
+
+//Create reservation
+app.post("/reserve/:id", async (req, res) => {
+  try {
+    const { orderId, status } = req.body;
+    const eventId = req.params.id;
+
+    const query =
+      "INSERT INTO reservations (orderId, eventId, status) VALUES ($1, $2, $3)";
+    await pool.query(query, [orderId, eventId, status]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
   }
 });
 

@@ -13,11 +13,12 @@ const Navbar = () => {
         return "Create Event";
       case "/scan-ticket":
         return "Scan Ticket";
-      case "edit-event/:id":
-        return "Edit Event";
       default:
         if (location.pathname.startsWith("/edit-event/")) {
           return "Edit Event";
+        }
+        if (location.pathname.startsWith("/reserve/")) {
+          return "Reserve Event";
         }
         return "";
     }

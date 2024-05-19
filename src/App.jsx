@@ -4,6 +4,7 @@ import ScanTicket from "./scan-ticket";
 import Navbar from "./navbar";
 import EventTable from "./EventTable";
 import EditEvent from "./edit-event";
+import ReserveEvent from "./ReserveEvent";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/scan-ticket" element={<ScanTicket />} />
         <Route path="/edit-event/:id" element={<EditEvent />} />
+        <Route path="/reserve/:id" element={<ReserveEvent />} />
       </Routes>
     </Router>
   );

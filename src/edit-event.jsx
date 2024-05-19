@@ -53,7 +53,7 @@ const EditEvent = () => {
     await axios
       .put(`http://localhost:3000/data/${id}`, eventData)
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.message);
         alert(response.data);
         window.location.href = "/"; // Redirect to the startup page
       })
